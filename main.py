@@ -2,6 +2,7 @@ from PyQt5 import uic, QtCore
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtGui import QPixmap, QPainter
 import math
+import sys
 
 
 class DBSample(QMainWindow):
@@ -28,34 +29,51 @@ class DBSample(QMainWindow):
         self.start = False
 
     def click(self):
-        self.poworot = int(self.lineEdit.text())
-        self.start = True
-        if self.comboBox.currentIndex() == 1:
-            self.poworot = math.degrees(self.poworot)
-        self.label_2.setText(f'sin: {str(round(math.sin(math.radians(self.poworot)), 3))}')
-        self.label_3.setText(f'cos: {str(round(math.cos(math.radians(self.poworot)), 3))}')
-        if round(math.sin(math.radians(self.poworot)), 3) == 0.0:
-            self.label_4.setText(
-                f'tg: {str(round(math.sin(math.radians(self.poworot)) / math.cos(math.radians(self.poworot)), 3))}')
-            self.label_5.setText('ctg: -')
-        elif round(math.cos(math.radians(self.poworot)), 3) == 0.0:
-            self.label_5.setText(
-                f'ctg: {str(round(math.cos(math.radians(self.poworot)) / math.sin(math.radians(self.poworot)), 3))}')
-            self.label_4.setText('tg: -')
-        else:
-            self.label_4.setText(
-                f'tg: {str(round(math.sin(math.radians(self.poworot)) / math.cos(math.radians(self.poworot)), 3))}')
-            self.label_5.setText(
-                f'ctg: {str(round(math.cos(math.radians(self.poworot)) / math.sin(math.radians(self.poworot)), 3))}')
-        self.label_6.setText(
-            f'coords: ({str(round(math.cos(math.radians(self.poworot)), 3))}; \
+        try:
+            self.lineEdit.setStyleSheet("color: black;")
+            self.poworot = int(eval(self.lineEdit.text()))
+            if len(str(self.poworot)) > 100 * 100:
+                print('124')
+                raise OverflowError
+            self.lineEdit.setText(str(self.poworot))
+            self.start = True
+            if self.comboBox.currentIndex() == 1:
+                self.poworot = math.degrees(self.poworot)
+            self.label_2.setText(f'sin: {str(round(math.sin(math.radians(self.poworot)), 3))}')
+            self.label_3.setText(f'cos: {str(round(math.cos(math.radians(self.poworot)), 3))}')
+            if round(math.sin(math.radians(self.poworot)), 3) == 0.0:
+                self.label_4.setText(
+                    f'tg: {str(round(math.sin(math.radians(self.poworot)) / math.cos(math.radians(self.poworot)), 3))}')
+                self.label_5.setText('ctg: -')
+            elif round(math.cos(math.radians(self.poworot)), 3) == 0.0:
+                self.label_5.setText(
+                    f'ctg: {str(round(math.cos(math.radians(self.poworot)) / math.sin(math.radians(self.poworot)), 3))}')
+                self.label_4.setText('tg: -')
+            else:
+                self.label_4.setText(
+                    f'tg: {str(round(math.sin(math.radians(self.poworot)) / math.cos(math.radians(self.poworot)), 3))}')
+                self.label_5.setText(
+                    f'ctg: {str(round(math.cos(math.radians(self.poworot)) / math.sin(math.radians(self.poworot)), 3))}')
+            self.label_6.setText(
+                f'coords: ({str(round(math.cos(math.radians(self.poworot)), 3))}; \
 {str(round(math.sin(math.radians(self.poworot)), 3))})')
-        self.update()
+            self.update()
+        except SyntaxError:
+            self.lineEdit.setStyleSheet("color: red;")
+            self.lineEdit.setText('Неправильный ввод')
+        except NameError:
+            self.lineEdit.setStyleSheet("color: red;")
+            self.lineEdit.setText('Неправильный ввод')
+        except OverflowError:
+            self.lineEdit.setStyleSheet("color: red;")
+            self.poworot = 0
+            self.lineEdit.setText('Слишком большое значение')
+        except ValueError:
+            self.lineEdit.setStyleSheet("color: red;")
+            self.lineEdit.setText('Неправильный ввод')
 
 
 if __name__ == '__main__':
-    import sys
-
     app = QApplication(sys.argv)
 
     ex = DBSample()
